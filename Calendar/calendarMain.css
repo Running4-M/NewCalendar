@@ -1,0 +1,178 @@
+body, h3, p, ul, li, a {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.user-menu {
+  position: absolute;
+  top: -25px;
+  right: -10px;
+  z-index: 3000;
+}
+
+.user-menu .user-icon {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.user-menu .user-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #5a4ce6;
+}
+
+.navbar-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.navbar-right {
+  position: absolute;
+  top: 50%;
+  right: 2rem;
+  transform: translateY(-50%);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-size: 1rem;
+  color: #555;
+}
+
+.nav-links a.active {
+  color: #5a4ce6;
+  font-weight: bold;
+  border-bottom: 2px solid #5a4ce6;
+}
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1500;
+  display: none;
+}
+
+.overlay.active {
+  display: block;
+}
+
+#logoutButton {
+  background-color: #ff4d4d;
+}
+
+#logoutButton:hover {
+  background-color: #e60000;
+}
+
+#helpButton {
+  background-color: #007bff;
+}
+
+#helpButton:hover {
+  background-color: #0056b3;
+}
+
+.feedback-section {
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+.feedback-section h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.feedback-section p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.feedback-section a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.feedback-section a:hover {
+  text-decoration: underline;
+}
+
+
+      
+      
+      /* Modal styles */
+      #eventModal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      #modalContent {
+        background-color: white;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 400px;
+        text-align: center;
+      }
+      #modalContent input,
+      #modalContent button {
+        margin: 10px 0;
+        padding: 10px;
+        width: 100%;
+        font-size: 16px;
+      }

@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="calendarMain.css">
+    <script src="templates.js"></script>
+    <script src="https://kit.fontawesome.com/16576df6c7.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/common/main.min.css" />
+    
+  </head>
+
+  <style>
+ *{
+  font-family: var(--size) "ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace !important";
+ }
+
+
+
+        @media (max-width: 768px) {
+  .navbar-left .logo {
+    display: none;
+  }
+}
+     #completeTask {
+    background-color: #4CAF50; /* Pretty green */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 10px 20px; /* Some padding for better size */
+    text-align: center; /* Center text */
+    text-decoration: none; /* No underlining */
+    display: inline-block; /* Align as inline */
+    font-size: 16px; /* Font size */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer on hover */
+    transition: background-color 0.3s ease; /* Smooth color change on hover */
+  }
+
+  #completeTask:hover {
+    background-color: #45a049; /* Darker green when hovering */
+  }
+
+
+
+
+
+
+
+
+  
+#deleteEvent {
+  background: #ff4d4f;
+  color: #fff;
+}
+
+#closeModal {
+  background: #f1f1f1;
+  color: #555;
+}
+
+
+
+/* Save button - styled as requested */
+#saveEvent {
+  display: none;
+  background: linear-gradient(90deg, #55e868, #498c5d);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  width: 100%;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+#submit-button{
+  display: block;
+  background: linear-gradient(90deg, #55e868, #498c5d);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  width: 100%;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#deleteEvent:hover {
+  background: #d9363e;
+}
+
+#closeModal:hover {
+  background: #e0e0e0;
+}
+
+
+
+/* Responsiveness for smaller screens */
+@media screen and (max-width: 768px) {
+  #eventModal {
+    width: 90%;
+    max-width: 350px;
+  }
+
+  .menu-options {
+    width: 100%;
+    right: 0;
+    top: 45px;
+  }
+
+  .user-menu {
+    top: 5px;
+    right: 5px;
+  }
+}
+
+
+/* Dark overlay */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Darker background */
+  z-index: 9999;
+  display: none;
+}
+
+/* Spinner styles */
+#spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000; /* Ensure it's on top of the overlay */
+  display: none;
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #ffffff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+
+
+
+
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 10px;
+  position: relative; /* Ensure the parent element is positioned */
+  width: 800px; /* Increased width */
+  height: 450px; /* Increased height */
+  max-width: 90%;
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; /* Make modal a flex container */
+  flex-direction: row; /* Align options side by side */
+  box-shadow: 0 15px 40px rgba(33, 150, 243, 0.5); /* Stronger blue glow */
+}
+
+.modal.large {
+  background: #fff;
+  border-radius: 10px;
+  position: relative;
+  width: 900px; /* Increased width */
+  height: 490px; /* Increased height */
+  max-width: 90%;
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; /* Make modal a flex container */
+  flex-direction: row; /* Align options side by side */
+  box-shadow: 0 15px 40px rgba(33, 150, 243, 0.5); /* Stronger blue glow */
+  padding: 20px;
+}
+
+.modal.aiOutput {
+  background: #fff;
+  border-radius: 10px;
+  position: relative;
+  width: 900px; /* Increased width */
+  height: 490px; /* Increased height */
+  max-width: 90%;
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; /* Make modal a flex container */
+  box-shadow: 0 15px 40px rgba(33, 150, 243, 0.5); /* Stronger blue glow */
+  padding: 20px;
+}
+.modal.aiOutput > div {
+  width: 100%;
+}
+.modal.aiInputs {
+  background: #fff;
+  border-radius: 10px;
+  position: relative;
+  width: 600px; /* Increased width */
+  height: 450px; /* Increased height */
+  max-width: 90%;
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; /* Make modal a flex container */
+  flex-direction: row; /* Align options side by side */
+  box-shadow: 0 15px 40px rgba(33, 150, 243, 0.5); /* Stronger blue glow */
+  padding-top: 30px;
+  padding-left: 35px;
+  padding-right: 35px;
+  padding-bottom: 40px;
+}
+
+
+
+
+.notification-time-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
+#notification,
+#time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.modal.extra-large {
+  position: relative;
+  width: fit-content;
+  height: 80%; /* Limit the height to 80% of the viewport height */
+  background: #fff;
+  border-radius: 10px;
+  max-width: 800px;
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  box-shadow: 0 15px 40px rgba(33, 150, 243, 0.5);
+  padding: 70px;
+  max-height: 60vh; /* Ensure the wrapper doesn't overflow the modal */
+  overflow-y: auto; /* Enable vertical scrolling when content overflows */
+}
+
+
+
+
+
+/* Adjusted for Option Container */
+.option-container {
+  display: flex; /* Use flexbox to align child elements next to each other */
+  justify-content: space-between; /* Distribute items evenly with space between */
+  align-items: stretch; /* Ensures full height of the modal is used */
+  height: 100%;
+  width: 100%; /* Ensures the container fills the width of the modal */
+}
+
+
+.option {
+  width: 50%; /* Each option takes 50% of the width */
+  height: 100%; /* Ensures full height of the modal */
+  padding: 20px;
+
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Ensures text and images are centered */
+  align-items: center;
+}
+
+.option:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(255, 255, 0, 0.6);
+  border: 2px solid yellow;
+}
+
+.option.ai {
+  background-color: #ff6961;
+  color: white;
+  font-size: bold;
+  font-size: 25px;
+}
+
+.option.manual {
+  background-color: #61aaff;
+  color: white;
+  font-size: bold;
+  font-size: 25px;
+}
+
+/* Image styling */
+.option .image-container {
+  margin-top: 15px;
+  width: 80%; /* Adjusts width of image container */
+}
+
+.option .image-container img {
+  width: 100%;  /* Ensures image fits nicely */
+  height: auto;
+  max-width: 80%; /* Controls the max width of the image */
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 40px;
+  background: black;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8em;
+  display: none;
+  white-space: nowrap;
+}
+
+.option:hover .tooltip {
+  display: block;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 10000000000;
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 10000000000000;
+}
+
+.spinner {
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top: 5px solid white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+#aiInputs {
+  width: 100%;
+  text-align: center;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+  /* Remove height: 100% to allow the content to grow dynamically */
+}
+
+
+
+
+
+
+
+
+
+#dragSuccessPopup {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 14px;
+    display: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+/* General input styling */
+
+
+
+
+/* Title Input (now only an underline, no box) */
+#eventTitle {
+  border: 2px solid #cccccc;
+  background: transparent;
+  font-size: 18px;
+  padding: 25px;
+  margin-top: none;
+  border-radius: 35px;
+}
+
+/* Description Input - Multi-line & Starts from Top */
+#eventDescription {
+  display: block;
+  height: 50%;
+  resize: vertical; /* Allows resizing only vertically */
+  overflow-y: auto;
+  border: 2px solid #cccccc;
+  padding: 20px; /* Ensures text starts at the top */
+  line-height: 1.5;
+  border-radius: 25px;
+  font-size: 15px;
+  font-family: var(--size) "ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace !important";
+}
+
+
+/* Date Input - Styled and Disabled */
+#eventDate {
+  flex-shrink: 1; /* Allow it to shrink if necessary */
+  width: auto; /* Allow the width to adjust based on content */
+  max-width: 100%; /* Prevent it from growing beyond the container's width */
+  background-color: #ffffff;
+  color: #000000;
+  height: 20px;
+  border: none;
+  border-radius: 35px;
+  text-align: center;
+  font-weight: bold;
+  cursor: not-allowed;
+  opacity: 0.7;
+  padding: 10px;
+  font-size: 25px;
+  width:100%;
+}
+#back-button {
+    flex-shrink: 0; /* Prevents the back button from shrinking */
+}
+
+.input-container {
+    display: flex;
+    align-items: center; /* Aligns the items vertically */
+    gap: 10px; /* Adds space between the button and input */
+    margin-bottom: 10px; /* Adds space below the container */
+}
+
+
+
+/* Notification Time Wrapper Styling */
+#notificationTime {
+  display: flex; /* Flexbox layout for horizontal alignment */
+  justify-content: center; /* Center the elements horizontally */
+  align-items: center; /* Vertically center the elements */
+  width: 100%; /* Ensures it takes full width */
+  max-width: 400px; /* Optional: Limits the width for better control */
+  margin-top: 15px; /* Adds space above */
+  padding: 10px;
+  background-color: #f9f9f9; /* Light background */
+  border-radius: 8px; /* Rounded corners for soft edges */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  text-align: center;
+  transition: 0.3s ease-in-out; /* Smooth transition for showing/hiding */
+}
+
+/* Space between elements inside #notificationTime */
+#notificationTime > * {
+  margin: 0 10px; /* Adds a gap between each element (left and right) */
+}
+
+/* Ensures the image and input field are vertically aligned */
+.ai-response-icon {
+  vertical-align: middle; /* Align the image in the middle */
+  height: 24px; /* Optional: set a fixed height for the image for consistency */
+}
+
+
+
+/* Task Time Input Wrapper */
+#notificationTime {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Spacing between icon & input */
+  background: #f9f9f9; /* Light background */
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: fit-content;
+  transition: border 0.3s ease-in-out;
+}
+
+/* Clock Icon */
+.ai-response-icon {
+  width: 20px; /* Adjust icon size */
+  height: 20px;
+}
+
+/* Task Time Input */
+#taskTime {
+  border: none;
+  outline: none;
+  font-size: 20px;
+  background: transparent;
+  padding: 5px 10px;
+  border-radius: 5px;
+  width: 120px; /* Set width for consistency */
+  cursor: pointer;
+}
+
+/* Hover & Focus Effect */
+#notificationTime:hover, #taskTime:focus {
+  border: 1px solid #55e868; /* Highlight effect */
+}
+
+
+  /* Overall Wrapper - Arranged in Rows */
+#overall-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Adds spacing between elements */
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+  margin-left: 15px;
+}
+/* Notification Section Styling */
+#notification, #aiResponseNotification{
+  display: none;
+  width: 100%; /* Ensures the div takes the full width of its parent */
+  max-width: 400px; /* Optional: Limit the width to 400px or whatever fits your design */
+  margin: 10px 0; /* Adds vertical space between notifications */
+  padding: 15px;
+  margin-left: 15px;
+  background-color: #f9f9f9; /* Light background color for distinction */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for better visual separation */
+  text-align: center; /* Center text */
+  transition: 0.3s ease-in-out; /* Smooth transition when toggled */
+}
+
+/* Title for Notifications */
+#notification-header, #aiResponse-header {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 10px; /* Space between title and checkbox */
+  color: #333; /* Dark text for contrast */
+}
+/* Checkbox Wrapper - Arranged in Columns */
+#checkbox-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+.notification-header,
+.aiResponse-header {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adds space between the image and the text */
+}
+
+.notification-icon,
+.ai-response-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+/* Reset generic label styling for checkbox labels */
+.checkbox-label {
+  display: inline-block;  /* Override any "display: flex" from generic label */
+  margin: 0;              /* Remove margin conflicts */
+  font-weight: normal;    /* Use normal font weight */
+  font-size: inherit;     /* Inherit font size from parent */
+  color: inherit;         /* Inherit color */
+}
+
+/* Adjust existing checkbox-wrapper-5 rules to target .checkbox-label */
+.checkbox-wrapper-5 .check .checkbox-label {
+  width: calc(2.2 * var(--size));
+  height: var(--size);
+  background: #d7d7d7;
+  overflow: hidden;
+}
+
+/* The rest of your checkbox styling remains unchanged */
+.checkbox-wrapper-5 .check {
+  --size: 40px;
+  position: relative;
+  background: linear-gradient(90deg, #55e868, #498c5d);
+  line-height: 0;
+  perspective: 400px;
+  font-size: var(--size);
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"],
+.checkbox-wrapper-5 .check .checkbox-label,
+.checkbox-wrapper-5 .check .checkbox-label::before,
+.checkbox-wrapper-5 .check .checkbox-label::after,
+.checkbox-wrapper-5 .check {
+  appearance: none;
+  display: inline-block;
+  border-radius: var(--size);
+  border: 0;
+  transition: .35s ease-in-out;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"] {
+  position: absolute;
+  z-index: 1;
+  width: calc(.8 * var(--size));
+  height: calc(.8 * var(--size));
+  top: calc(.1 * var(--size));
+  left: calc(.1 * var(--size));
+  background: linear-gradient(45deg, #dedede, #ffffff);
+  box-shadow: 0 6px 7px rgba(0,0,0,0.3);
+  outline: none;
+  margin: 0;
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"]:checked {
+  left: calc(1.3 * var(--size));
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"]:checked + .checkbox-label {
+  background: transparent;
+}
+
+.checkbox-wrapper-5 .check .checkbox-label::before,
+.checkbox-wrapper-5 .check .checkbox-label::after {
+  content: "· ·";
+  position: absolute;
+  overflow: hidden;
+  left: calc(.15 * var(--size));
+  top: calc(.5 * var(--size));
+  height: var(--size);
+  letter-spacing: calc(-0.04 * var(--size));
+  color: #9b9b9b;
+  font-family: "Times New Roman", serif;
+  z-index: 2;
+  font-size: calc(.6 * var(--size));
+  border-radius: 0;
+  transform-origin: 0 0 calc(-0.5 * var(--size));
+  backface-visibility: hidden;
+}
+
+.checkbox-wrapper-5 .check .checkbox-label::after {
+  content: "●";
+  top: calc(.65 * var(--size));
+  left: calc(.2 * var(--size));
+  height: calc(.1 * var(--size));
+  width: calc(.35 * var(--size));
+  font-size: calc(.2 * var(--size));
+  transform-origin: 0 0 calc(-0.4 * var(--size));
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"]:checked + .checkbox-label::before,
+.checkbox-wrapper-5 .check input[type="checkbox"]:checked + .checkbox-label::after {
+  left: calc(1.55 * var(--size));
+  top: calc(.4 * var(--size));
+  line-height: calc(.1 * var(--size));
+  transform: rotateY(360deg);
+}
+
+.checkbox-wrapper-5 .check input[type="checkbox"]:checked + .checkbox-label::after {
+  height: calc(.16 * var(--size));
+  top: calc(.55 * var(--size));
+  left: calc(1.6 * var(--size));
+  font-size: calc(.6 * var(--size));
+  line-height: 0;
+}
+
+
+
+
+/* Button Styling */
+.back-btn {
+    background-color: white;
+    color: black;
+    text-align: center;
+    width: 192px; /* Equivalent to w-48 */
+    height: 50px; /* Equivalent to h-14 */
+    font-size: 20px; /* Equivalent to text-xl */
+    font-weight: 600; /* Equivalent to font-semibold */
+    border-radius: 16px; /* Equivalent to rounded-2xl */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+}
+
+/* Moving Green Background */
+.back-icon {
+    background-color: #4ade80; /* Equivalent to bg-green-400 */
+    border-radius: 12px; /* Equivalent to rounded-xl */
+    height: 42px; /* Equivalent to h-12 */
+    width: 25%; /* Initially small */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    transition: width 0.5s ease-in-out;
+    z-index: 10;
+}
+
+/* Text Styling */
+.back-text {
+    transform: translateX(8px); /* Equivalent to translate-x-2 */
+    transition: color 0.3s ease-in-out;
+    z-index: 5;
+}
+
+/* Hover Effect */
+.back-btn:hover .back-icon {
+    width: 150px; /* Expands when hovered */
+}
+
+ /* Adding hover and active states for both buttons */
+ #acceptSuggestion:hover {
+    background-color: #45a049; /* Darker green on hover */
+    box-shadow: 0 10px 25px rgba(0, 128, 0, 0.3); /* Enhanced shadow on hover */
+    transform: translateY(-5px); /* Slight lift effect on hover */
+  }
+
+  #acceptSuggestion:active {
+    transform: translateY(2px); /* Add slight pressed effect */
+    box-shadow: 0 4px 10px rgba(0, 128, 0, 0.3); /* Reduce shadow on active */
+  }
+
+  #declineSuggestion:hover {
+    background-color: #e74c3c; /* Darker red on hover */
+    box-shadow: 0 10px 25px rgba(255, 87, 51, 0.3); /* Enhanced shadow on hover */
+    transform: translateY(-5px); /* Slight lift effect on hover */
+  }
+
+  #declineSuggestion:active {
+    transform: translateY(2px); /* Add slight pressed effect */
+    box-shadow: 0 4px 10px rgba(255, 87, 51, 0.3); /* Reduce shadow on active */
+  }
+  .loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.ripple {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.ripple::before, .ripple::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    background: conic-gradient(from 0deg, #55e868, #498c5d);
+    mask-image: radial-gradient(circle, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 100%);
+    opacity: 0;
+    animation: ripple 1s infinite;
+}
+
+.ripple::after {
+    animation-delay: 1.5s;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    25% {
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* ---------- Calendar Header (Always Full Width) ---------- */
+#calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #eee;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1050;
+  /* Subtle shadow for depth */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* ---------- Hamburger Icon ---------- */
+.hamburger-icon {
+  background: none;
+  border: none;
+  font-size: 2rem;  /* Larger hamburger */
+  color: #333;
+  cursor: pointer;
+  margin-right: 1rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+.hamburger-icon:hover {
+  color: #007bff;
+  transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* ---------- Left Controls (Prev, Today, Next) ---------- */
+.left-controls {
+  display: flex;
+  align-items: center;
+}
+
+/* Navigation Buttons (Prev / Next) */
+.nav-btn {
+  background: #f0f0f0;
+  border: none;
+  font-size: 1.2rem;
+  color: #333;
+  margin-right: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 0.8rem;
+  border-radius: 50px;  /* Round pill shape */
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.nav-btn:hover {
+  background: #e6e6e6;
+  transform: translateY(-2px);
+}
+
+/* Today Button */
+.fc-today {
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 25px;  /* Slightly rounded pill */
+  cursor: pointer;
+  margin-right: 0.75rem;
+  transition: background 0.3s, border-color 0.3s, transform 0.2s ease;
+}
+.fc-today:hover {
+  background: #e2e6ea;
+  border-color: #007bff;
+  transform: translateY(-2px);
+}
+
+/* ---------- Title Controls (Month Year) ---------- */
+.title-controls {
+  font-size: 1.75rem;  /* Bigger, more eye-catching */
+  font-weight: 700;
+  color: #333;
+  flex: 1;
+  text-align: center;
+}
+
+/* ---------- View Controls (Select Dropdown) ---------- */
+/* --- View Controls (Dropdown) --- */
+.view-controls {
+  display: flex;
+  align-items: center;
+  /* Optional spacing around the dropdown */
+  margin-right: 1rem;
+}
+
+.view-controls select {
+  /* Larger, rounded dropdown */
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 25px;    /* Rounded corners */
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Focus/Active State */
+.view-controls select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2); /* Subtle highlight */
+}
+
+
+  /* --- Today Button --- */
+#today-btn.fc-today {
+  /* Slightly bigger, no border, pill shape */
+  font-size: 1rem;
+  background: #007bff;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 25px;  /* Rounded corners */
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s ease;
+  margin-right: 0.75rem; /* optional spacing to the next element */
+}
+
+/* Hover/Active State for Today Button */
+#today-btn.fc-today:hover {
+  background: #0056b3;  /* Darker accent */
+  transform: translateY(-2px);
+}
+  .title-controls {
+    font-size: 40px;
+    font-weight: 400;
+    color: #333;
+  }
+
+  
+ /* App Container now uses flex to lay out its children side by side */
+#app-container {
+  display: flex;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+  width: 100%;
+}
+  /* Calendar Container fills the remaining space */
+#calendar-container {
+  flex: 1;
+  transition: all 0.3s ease;
+  background: #eee; /* Matches the calendar background */
+}
+   /* When sidebar is open, shift the calendar container */
+   #app-container.shifted #calendar-container {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+  }
+  /* The calendar itself always fills its container */
+  #calendar {
+    width: 100%;
+    height: 100%;
+    background: #eee; /* Demo background */
+  }
+  
+    /* Sidebar initially has zero width; when active, it expands to 250px */
+#sidebar {
+  width: 0;
+  overflow: hidden;
+  background: #f8f9fa;
+  transition: width 0.3s ease;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  border-right: 1px solid #eee;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+#sidebar.active {
+  width: 250px;
+}
+ /* (Optional) Logo / App Name at the top */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+.sidebar-logo img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+.sidebar-logo h2 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+/* Navigation */
+.sidebar-nav {
+  padding: 0 20px;
+  margin-bottom: 15px;
+}
+.sidebar-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sidebar-nav li {
+  margin: 12px 0;
+}
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  color: #333;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+.sidebar-nav a:hover {
+  background: #f5f5f5;
+}
+.sidebar-nav a.active {
+  background: #e9f2ff;
+  color: #007bff;
+  font-weight: 600;
+}
+.sidebar-nav i {
+  margin-right: 10px;
+  font-size: 1.1rem;
+}
+
+/* Optional: a separator line */
+.sidebar-separator {
+  height: 1px;
+  background: #ddd;
+  margin: 15px 20px;
+}
+
+/* Checkbox item styling (for Enable Notifications) */
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.checkbox-item input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* ---------- Sidebar Footer ---------- */
+.sidebar-footer {
+  margin-top: auto; /* push to bottom if using flex layout */
+  padding: 20px;
+}
+.sidebar-footer button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+.sidebar-footer button i {
+  margin-right: 8px;
+  font-size: 1.1rem;
+}
+.sidebar-footer button:hover {
+  background: #0056b3;
+}
+
+/* ---------- Feedback Section ---------- */
+.feedback-section {
+  padding: 20px;
+  background: #f8f9fa;
+  margin-top: 10px;
+}
+.feedback-section h3 {
+  margin-top: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.feedback-section p {
+  font-size: 0.9rem;
+  margin: 4px 0;
+}
+.feedback-section a {
+  color: #007bff;
+  text-decoration: none;
+}
+.feedback-section a:hover {
+  text-decoration: underline;
+}
+  
+  /* ---------- (Optional) FullCalendar Day Grid Enhancements ---------- */
+  .fc-daygrid-day {
+    background-color: #fff;
+    border: 1px solid #eee;
+    min-height: 250px;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+  }
+  .fc-daygrid-day:hover {
+    background-color: #f9f9f9;
+  }
+  .fc-daygrid-day-number {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #333;
+  }
+  .fc-day-other {
+    opacity: 0.6;
+  }
+  .fc-day-today {
+    background-color: #eaf6ff !important;
+  }
+  .fc-daygrid-day-frame {
+    max-height: 150px;
+    overflow: hidden;
+    position: relative;
+  }
+  .fc-event {
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    cursor: pointer;
+    background-color: #4285f4;
+    color: #fff;
+    transition: opacity 0.3s;
+  }
+  .fc-event:hover {
+    opacity: 0.9;
+  }
+  .fc-popover-body {
+  max-height: 300px;  /* Adjust the height as needed */
+  overflow-y: auto;   /* Enable vertical scrolling */
+  padding-right: 10px;  /* Optional: Adds space on the right if needed for scrollbar */
+}
+
+
+
+  </style>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://kit.fontawesome.com/16576df6c7.js" crossorigin="anonymous"></script>
+  
+  <body>
+<!-- Calendar Header (remains fixed at the top) -->
+<div id="calendar-header">
+  <!-- Hamburger icon toggles the sidebar -->
+  <button id="toggleSidebar" class="hamburger-icon">
+    <i class="fa fa-bars"></i>
+  </button>
+
+  <!-- Left controls (previous, today, next) -->
+  <div class="left-controls">
+    <button id="prev-btn" class="nav-btn">
+      <i class="fa fa-chevron-left"></i>
+    </button>
+    <button id="today-btn" class="fc-today">Today</button>
+    <button id="next-btn" class="nav-btn">
+      <i class="fa fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <!-- Title (Month Year) -->
+  <div class="title-controls">
+    <span id="calendar-title">March 2025</span>
+  </div>
+
+  <!-- View controls (select dropdown) -->
+  <div class="view-controls">
+    <select id="view-select">
+      <option value="dayGridMonth">Month</option>
+      <option value="listWeek">List</option>
+    </select>
+  </div>
+</div>
+
+<!-- App Container (below header) -->
+<div id="app-container">
+  <!-- Sidebar -->
+  <div id="sidebar" class="sidebar">
+    <!-- (Optional) Logo / App Name -->
+    <div class="sidebar-logo">
+      <!-- Replace with your own logo or remove if not needed -->
+      <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #007bff; margin-right: 10px;"></i>
+      <h2>AI Calendar</h2>
+    </div>
+    
+    <!-- Main Nav -->
+    <nav class="sidebar-nav">
+      <ul>
+        <!-- Example icons from Font Awesome (optional) -->
+        <li>
+          <a href="../display_Responses/chatgpt_Response.html">
+            <i class="fa fa-file-alt"></i> Responses
+          </a>
+        </li>
+        <li>
+          <a href="#" class="active">
+            <i class="fa fa-calendar"></i> Calendar
+          </a>
+        </li>
+        <li>
+          <a href="../JustChat/Just_Chat.html">
+            <i class="fa fa-comments"></i> Just Chat
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Divider / Separator -->
+    <div class="sidebar-separator"></div>
+
+    <!-- Secondary Nav or Additional Items -->
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <label class="checkbox-item">
+            <input type="checkbox" id="enableNotifications">
+            <span>Enable Notifications</span>
+          </label>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Footer area for help/logout or other items -->
+    <div class="sidebar-footer">
+      <button id="helpButton">
+        <i class="fa fa-question-circle"></i> Help
+      </button>
+      <button id="logoutButton">
+        <i class="fa fa-sign-out-alt"></i> Log Out
+      </button>
+    </div>
+
+    <!-- Feedback Section (optional) -->
+    <div class="feedback-section">
+      <h3>Any Feedback?</h3>
+      <p>Email: <a href="mailto:mchlrotaru@gmail.com">mchlrotaru@gmail.com</a></p>
+      <p>Discord: <a href="https://discord.gg/b35jhnCH" target="_blank">Visit Discord</a></p>
+    </div>
+  </div>
+  
+  <!-- Calendar Container (expands to fill available space) -->
+  <div id="calendar-container">
+    <div id="calendar">
+      <!-- Your calendar content goes here -->
+    </div>
+  </div>
+</div>
+
+
+    
+    
+
+      
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const sidebar = document.getElementById("sidebar");
+  const calendarContainer = document.getElementById("calendar-container");
+  const toggleButton = document.getElementById("toggleSidebar");
+
+  const sidebarWidth = 250; // Sidebar width in pixels
+  let sidebarOpen = false;
+
+  // Initialize FullCalendar
+  let calendarEl = document.getElementById("calendar");
+  let calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: "dayGridMonth",
+    headerToolbar: false, // Custom header
+  });
+  calendar.render();
+
+  // Set a matching background so there's no ugly patch
+  calendarContainer.style.backgroundColor = "#eee";
+
+  let updateInterval; // Will hold our continuous update timer
+
+  toggleButton.addEventListener("click", function () {
+    if (sidebarOpen) {
+      sidebar.classList.remove("active");
+      calendarContainer.style.left = "0";
+      calendarContainer.style.width = "100%";
+    } else {
+      sidebar.classList.add("active");
+      calendarContainer.style.left = `${sidebarWidth}px`;
+      calendarContainer.style.width = `calc(100% - ${sidebarWidth}px)`;
+    }
+    sidebarOpen = !sidebarOpen;
+
+    // Start continuously updating FullCalendar size during the transition (approx. 60fps)
+    if (updateInterval) clearInterval(updateInterval);
+    updateInterval = setInterval(() => {
+      calendar.updateSize();
+    }, 16); // roughly 16ms ~ 60fps
+
+    // When the transition ends, clear the update interval and perform a final update
+    calendarContainer.addEventListener("transitionend", function handler(e) {
+      if (e.propertyName === "width" || e.propertyName === "left") {
+        clearInterval(updateInterval);
+        calendar.updateSize();
+        calendarContainer.removeEventListener("transitionend", handler);
+      }
+    });
+  });
+
+  // ✅ Fix: Force calendar to update size after a delay on first load
+  setTimeout(() => {
+    calendar.updateSize();
+  }, 100);
+});
+
+</script>
+    
+    <div id="overlay" class="overlay"></div>
+
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+      <div class="modal" id="modal">
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="spinner"></div>
+        </div>
+  
+        <div class="option-container" id="optionContainer">
+          <div class="option manual" id="simpleTask">
+            <h3>Add simple task</h3>
+            <!-- Lottie Animation for Simple Task -->
+            <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+            <dotlottie-player src="https://lottie.host/83e7daba-da9d-47e9-a854-a0642ed4106f/tAuqpoF09G.lottie" background="transparent" speed="1" style="width: 300px; height: 300px" loop autoplay></dotlottie-player>
+            <!-- Image for Simple Task -->
+            
+            <div class="tooltip">For simple task</div>
+          </div>
+          <div class="option ai" id="aiOption">
+            <h3>AI Assistance</h3>
+            
+            <!-- Lottie Animation for AI Assistance -->
+            <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+            <dotlottie-player src="https://lottie.host/4fe4776c-74b6-429f-a961-333ffe954e01/5KoNZkPqsw.lottie" background="transparent" speed="1" style="width: 300px; height: 300px" loop autoplay></dotlottie-player>
+            <!-- Image for AI Assistance -->
+            
+            <div class="tooltip">Personlised complex task creation</div>
+          </div>
+        </div>
+        
+        
+  
+        <!-- AI Inputs Section -->
+         <!-- Input container for back button and eventDate input -->
+         
+        
+
+        <div class="ai-inputs small-aiInputs" id="aiInputs" style="display:none;">
+          <!-- Input container for back button and eventDate input -->
+          <div class="input-container" id="inputContainer">
+            <button class="back-btn" id="back-button" type="button" style="display: block;">
+              <div class="back-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" height="25px" width="25px">
+                  <path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z" fill="#000000"></path>
+                  <path d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z" fill="#000000"></path>
+                </svg>
+              </div>
+              <p class="back-text">Go Back</p>
+            </button>
+            <input type="text" id="eventDate" aria-label="Event date" disabled placeholder="Event Date" />
+          </div>
+          
+          <input type="text" placeholder="Enter Title" id="eventTitle">
+          
+          <textarea type="text" placeholder="Enter Short Description" id="eventDescription"></textarea>
+          
+          <button id="submit-button" onclick="handleSubmit()">Submit</button>
+        </div>
+        
+
+<!-- Manual Task Type Selection -->
+<div class="manual-selection" id="manualSelection" style="display:none;">
+  <select id="aiType" aria-label="Task type selection">
+    <option value="manual">Choose Manually</option>
+    <option value="brainstormIdeas">Brainstorm Ideas</option>
+    <option value="createOutline">Create an Outline</option>
+    <option value="generateList">Generate a List</option>
+    <option value="createContent">Content Creation</option>
+    <option value="summarizeInformation">Summarize Information</option>
+    <option value="rewriteText">Rewrite Text</option>
+    <option value="emailDraft">Email Draft</option>
+    <option value="creativeWriting">Creative Writing</option>
+    <option value="learningHelp">Learning Help</option>
+    <option value="answerQuestions">Answer Questions</option>
+    <option value="translation">Translation</option>
+    <option value="other">Other</option>
+  </select>
+  <div id="manualTemplateContainer" style="margin-top: 20px;">
+    <!-- Dynamically display template here -->
+  </div>
+</div>
+
+<!-- AI Suggested Task Type Section -->
+<div id="aiSuggestedOutput" style="display: none; flex-direction: column; text-align: center; width: 100%; padding: 20px;">
+
+  <!-- Back Button and Task Type Title -->
+  <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+    <!-- Back Button -->
+    <button class="back-btn" id="back-button-ai" type="button" style="display: flex; align-items: center; background: none; border: none; cursor: pointer; margin-right: 20px;">
+      <div class="back-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" height="30px" width="30px">
+          <path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z" fill="#000000"></path>
+          <path d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z" fill="#000000"></path>
+        </svg>
+      </div>
+      <p class="back-text" style="margin-left: 5px;">Go Back</p>
+    </button>
+
+    <!-- Suggested Task Title (Centered) -->
+    <h3 style="font-size: 35px; font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; flex-grow: 1;">
+      <span id="suggestedTaskType"></span>
+      <pan id="suggestedTaskTypeRaw" style="display: none;"></span>
+    </h3>
+  </div>
+
+  <!-- AI Reason Section with adjusted margins and spacing -->
+  <div style="max-width: 600px; margin: auto; flex-grow: 1; display: flex; justify-content: center; margin-top: 20px;">
+    <p style="font-size: 22px; color: #000000; margin-top: 20px; margin-bottom: 20px;">
+      <strong style="color: #333;"></strong> <span id="taskReason"></span>
+    </p>
+  </div>
+
+  <!-- Buttons Section (Centered and adjusted for spacing) -->
+<div style="width: 80%; display: flex; justify-content: center; align-items: center; gap: 30px; margin: 35px auto 40px auto;">
+  <button id="acceptSuggestion" style="padding: 20px 40px; font-size: 18px; border-radius: 30px; background-color: #4CAF50; color: white; border: none; cursor: pointer; box-shadow: 0 6px 15px rgba(0, 128, 0, 0.2); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+    Accept Suggestion
+  </button>
+  <button id="declineSuggestion" style="padding: 20px 40px; font-size: 18px; border-radius: 30px; background-color: #FF5733; color: white; border: none; cursor: pointer; box-shadow: 0 6px 15px rgba(255, 87, 51, 0.2); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+    Decline and Choose Manually
+  </button>
+</div>
+
+
+  <!-- Lottie Animation -->
+</div>
+
+
+
+
+        
+    <!-- Step 3: Dynamic Templates for Selected AI Type -->
+    
+
+    <div id="overall-wrapper" >
+      <div id="checkbox-wrapper">
+        <div id="notification" style="display: none;">
+          <!-- Image and h4 inline -->
+          <div class="notification-header">
+            <img src="../assets/ringing.png" alt="Notification Icon" class="notification-icon" />
+            <h4 id="notification-header">Enable to receive notifications for event</h4>
+          </div>
+          <div class="checkbox-wrapper-5" id="notification-checkbox">
+            <div class="check">
+              <input type="checkbox" id="receiveNotifications">
+              <label for="receiveNotifications" class="checkbox-label"></label>
+            </div>
+          </div>
+        </div>
+    
+        <div id="notificationTime" style="display: none;">
+          <img src="../assets/clock.png" alt="AI Response Icon" class="ai-response-icon" />
+          <input type="text" id="taskTime" placeholder="Select Time">
+        </div>
+    
+        <div id="aiResponseNotification" style="display: none;">
+          <!-- Image and h4 inline -->
+          <div class="aiResponse-header">
+            <img src="../assets/ai.png" alt="AI Response Icon" class="ai-response-icon" />
+            <h4 id="aiResponse-header">Enable to receive an AI response</h4>
+          </div>
+          <div class="checkbox-wrapper-5" id="aiResponse-checkbox" style="margin-left: 5px;">
+            <div class="check">
+              <input type="checkbox" id="receiveAIResponse">
+              <label for="receiveAIResponse" class="checkbox-label"></label>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    
+      <button id="saveEvent" type="button" style="display: flex;">Save</button>
+    </div>
+    
+    
+    
+
+    <!-- Buttons -->
+    
+    <button id="completeTask" type="button" style="display: none;">Task Completed</button>
+
+    <!-- Completion Popup -->
+    <div id="completionPopup" style="display: none; background-color: #d4edda; color: #155724; padding: 10px; position: fixed; bottom: 20px; right: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+      🎉 Well done! Keep it up! 🎉
+    </div>
+    <!-- Notification Container (hidden by default) -->
+
+
+    
+    
+    </div>
+    </div>
+    
+
+
+ <!-- jQuery CDN -->
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+ <!-- External scripts (firebase, permission, templates) -->
+
+ <script src="calendarMain.js" type="module"></script>
+ <script src="../backend/firebase.js" type="module"></script>
+ <script type="module" src="permission.js"></script>
+ <script type="module" src="../JustChat/notification.js"></script>
+<script>
+  // Event listener for the checkbox
+// Event listener for the checkbox
+const notificationCheckbox = document.querySelector("#receiveNotifications");
+const taskTimeInput = document.querySelector("#notificationTime");
+
+
+// Check the initial state of the checkbox and update the time input accordingly
+notificationCheckbox.addEventListener("change", function () {
+  if (notificationCheckbox.checked) {
+    taskTimeInput.style.display = "block"; // Show the time input
+    taskTimeInput.disabled = false; // Enable the time input
+    taskTimeInput.style.backgroundColor = ""; // Reset background color to default
+  } else {
+    taskTimeInput.style.display = "none"; // Hide the time input
+    taskTimeInput.disabled = true; // Disable the time input
+    taskTimeInput.style.backgroundColor = "#f0f0f0"; // Gray out the input field
+  }
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+      flatpickr("#taskTime", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i", // 24-hour format (HH:MM)
+        time_24hr: true // Enables 24-hour format
+      });
+  });
+</script>
+    
+    
+    
+
+    <!-- Initialize your DOM manipulations and events after everything is loaded -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize flatpickr for task time input
+            flatpickr("#taskTime", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i", // 24-hour format (HH:MM)
+                time_24hr: true // Enables 24-hour format
+            });
+
+            // Event listener for the checkbox
+            const notificationCheckbox = document.querySelector("#receiveNotifications");
+            const taskTimeInput = document.querySelector("#notificationTime");
+
+            notificationCheckbox.addEventListener("change", function () {
+                if (notificationCheckbox.checked) {
+                    taskTimeInput.style.display = "block"; // Show the time input
+                    taskTimeInput.disabled = false; // Enable the time input
+                    taskTimeInput.style.backgroundColor = ""; // Reset background color to default
+                } else {
+                    taskTimeInput.style.display = "none"; // Hide the time input
+                    taskTimeInput.disabled = true; // Disable the time input
+                    taskTimeInput.style.backgroundColor = "#f0f0f0"; // Gray out the input field
+                }
+            });
+
+            // Your other DOM manipulations can go here
+        });
+        const saveButton = document.getElementById("saveEvent");
+
+    </script>
+    
+  </body>
+</html>
