@@ -9,6 +9,10 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js"; // Import Firebase Auth
+import { initializeFirebase } from "../backend/firebase.js"; // Import the initializeFirebase function
+
+// Initialize Firebase
+initializeFirebase(); // Call the function to initialize Firebase
 const auth = getAuth();
 // Utility: Display error messages
 function displayError(errorCode) {
