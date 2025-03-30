@@ -881,7 +881,7 @@ async function extractTextFromURL(url) {
 document.getElementById("send-btn").addEventListener("click", async function() {
   let messageInput = document.getElementById('messageInput');
   let message = messageInput.value.trim();
-  let chatDisplay = document.getElementById('chat-display');
+  
   let chatHeader = document.getElementById('chat-header');
   let chatContainer = document.querySelector('.chat-container');
 
@@ -891,8 +891,8 @@ document.getElementById("send-btn").addEventListener("click", async function() {
 
     // Hide header and show chat display
     chatHeader.style.display = "none";
-    chatDisplay.style.display = "flex";
-    chatDisplay.classList.add('active'); // Add active class to adjust width
+    
+    
 
     // Create message bubble for user
     let messageBubble = document.createElement("div");
